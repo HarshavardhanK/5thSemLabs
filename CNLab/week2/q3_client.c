@@ -14,7 +14,8 @@ int print_array(int* arr, int size) {
 
 int main(int argc, char** argv) {
 
-    int arr[] = {4,5,6,3,2,1,6,7,8,-1};
+    int arr[10] = {4,5,6,-1,1,2,8,7,3,6};
+    print_array(arr, 10);
 
     int client = create_client("127.0.0.1", 3000, &arr, 10, print_array);
 

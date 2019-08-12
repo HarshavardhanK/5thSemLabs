@@ -28,7 +28,7 @@ void print_buffer(int *buffer, int buffer_size) {
 int create_server(char* ip_addr, int port_no, int buffer_size, int (*server_task) (int* buffer, int buffer_size)) {
     
     int server_sockfd, client_sockfd;
-    int server_len, client_len;
+    socklen_t server_len, client_len;
 
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
@@ -108,16 +108,18 @@ int create_server(char* ip_addr, int port_no, int buffer_size, int (*server_task
 
                         int read_size;
 
-                        while ((read_size = recv(client_sockfd, &buffer, 10 * sizeof(int), 0)) > 0) { 
+                       // bzero(buffer, buffer_size);
+
+                        while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(int), 0)) > 0) { 
 
                             print_buffer(buffer, buffer_size);
   
                             server_task(buffer, 10); 
   
-                            write(client_sockfd, buffer, 10 * sizeof(int)); 
+                            write(client_sockfd, buffer, buffer_size * sizeof(int)); 
                          } 
 
-                        write(fd, buffer, 10);
+                        //write(fd, buffer, 10);
                         //write(fd, getpid(), sizeof(int));
                     }
                 }

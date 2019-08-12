@@ -4,7 +4,7 @@ int generate_result(int* buffer, int size) {
 
     int x = buffer[0];
     int y = buffer[1];
-    char op = buffer[2];
+    int op = buffer[2];
     buffer[3] = 0;
 
     if(op == 1)

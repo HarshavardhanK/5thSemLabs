@@ -52,13 +52,13 @@ int create_client(char* ip_addr, int port_no, int** buffer, int buffer_size, int
         return -1;
     }
 
-    print_buffer(*buffer, buffer_size);
+    //print_buffer(*buffer, buffer_size);
 
     send(sockfd, buffer, buffer_size * sizeof(int), 0);
 
     recv(sockfd, &result_buffer, buffer_size * sizeof(int), 0);
 
-    client_task(result_buffer, 10);
+    client_task(result_buffer, buffer_size);
 
     return 1;
 }

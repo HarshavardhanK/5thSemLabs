@@ -26,7 +26,7 @@ void generate_input_buffer(int* buffer) {
 
     } else {
 
-        buffer[2] = 3;
+        buffer[2] = 4;
         printf("Considering division\n");
 
         if(y == 0) {
