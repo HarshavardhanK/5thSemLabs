@@ -1,0 +1,9 @@
+/home/170905022/H170905022/OSLab/week1
+Tue Jul 23 19:59:46 IST 2019
+file1.txt
+file2.txt
+file3.txt
+File6.txt
+file7.txt
+lists.txt
+num.txt

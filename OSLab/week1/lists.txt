@@ -1,0 +1,2 @@
+getent passwd | wc -l 
+ls | wc -l 
