@@ -38,9 +38,9 @@ void generate_input_buffer(int* buffer) {
     
 }
 
-int generate_output(int* buffer, int size) {
+int generate_output(void* buffer, int size) {
 
-    printf("\nResult is %d\n", buffer[3]);
+    printf("\nResult is %d\n", ((int*)buffer)[3]);
 
     return 0;
 }
@@ -50,7 +50,9 @@ int main(int argc, char** argv) {
     int* input = (int*) malloc(sizeof(int) * 4);
     generate_input_buffer(input);
 
-    int client = create_client("127.0.0.1", 3000, &input, 4, generate_output);
+    //input = (void*)input;
+
+    int client = create_client("127.0.0.1", 3000, INT, &input, 4, generate_output);
 
     return 0;
 

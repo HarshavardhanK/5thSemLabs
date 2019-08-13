@@ -14,6 +14,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+#define CHAR 1
+#define INT 0
+
 void print_buffer(int *buffer, int buffer_size) {
 
     for(int i = 0; i < buffer_size; i++) {
@@ -23,9 +26,20 @@ void print_buffer(int *buffer, int buffer_size) {
     printf("\n");
 }
 
+void cast_buffer(int type, void* buffer, int buffer_size) {
+
+    if(type == CHAR) {
+        buffer = (char*) malloc(sizeof(char) * buffer_size);
+
+    } else if(type == INT) {
+        buffer = (int*) malloc(sizeof(int) * buffer_size);
+    }
+
+}
+
 //handle buffer_size param for q3
 
-int create_server(char* ip_addr, int port_no, int buffer_size, int (*server_task) (int* buffer, int buffer_size)) {
+int create_server(char* ip_addr, int port_no, int buffer_size, int type, int (*server_task) (void* buffer, int buffer_size)) {
     
     int server_sockfd, client_sockfd;
     socklen_t server_len, client_len;
@@ -38,8 +52,9 @@ int create_server(char* ip_addr, int port_no, int buffer_size, int (*server_task
     fd_set readfds, test_fds;
 
     //
-    int buffer[10];
-
+    void* buffer;
+    cast_buffer(type, buffer, buffer_size);
+    
     //Create and name a socket for the server
     server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -108,23 +123,48 @@ int create_server(char* ip_addr, int port_no, int buffer_size, int (*server_task
 
                         int read_size;
 
-                       // bzero(buffer, buffer_size);
+                       if(type == INT) {
 
-                        while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(int), 0)) > 0) { 
+                           //printf("Problem with receviing\n");
 
-                            print_buffer(buffer, buffer_size);
+                           while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(int), 0)) > 0) { 
+
+                               if(buffer != NULL) {
+
+                                   server_task(buffer, buffer_size); 
   
-                            server_task(buffer, 10); 
-  
-                            write(client_sockfd, buffer, buffer_size * sizeof(int)); 
+                                   write(client_sockfd, buffer, buffer_size * sizeof(int)); 
+
+                               } else {
+
+                                   printf("Buffer is NULL\n");
+                               }
+                            
                          } 
 
-                        //write(fd, buffer, 10);
-                        //write(fd, getpid(), sizeof(int));
+                       } else if(type == CHAR) {
+
+                           //printf("Problem with receviing\n");
+
+                           while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(char), 0)) > 0) { 
+  
+                            server_task(buffer, buffer_size); 
+  
+                            write(client_sockfd, buffer, buffer_size * sizeof(char)); 
+                         } 
+
+                       }
+
+                       
                     }
+
                 }
+
             }
+
         }
+
+
     }
 
     return 1;

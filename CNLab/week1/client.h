@@ -13,16 +13,23 @@
 #include <unistd.h>
 
 
-int create_client(char* ip_addr, unsigned int port_no, int (*client_task)(int, char*, int*), int client_input) {
+void print_buffer(int* buffer, int buffer_size) {
+
+    for(int i = 0; i < buffer_size; i++) {
+        printf("%d ", buffer[i]);
+    }
+
+    printf("\n");
+}
+
+int create_client(char* ip_addr, int port_no, int** buffer, int buffer_size, int input, int (*client_task) (int*, int)) {
 
     int len;
     int result;
     int sockfd;
     int n = 1;
 
-    char ch[256];
-    char buffer[512];
-
+    int result_buffer[buffer_size];
 
     struct sockaddr_in address;
 
@@ -39,29 +46,33 @@ int create_client(char* ip_addr, unsigned int port_no, int (*client_task)(int, c
     //Connect your socket to the server's socket
     result = connect(sockfd, (struct sockaddr*)& address, len);
 
-    printf("\n");
-
     if(result == -1) {
         perror("\nClient error\n");
         //exit(1);
         return -1;
     }
 
-    printf("server response |");
-
-    if(client_input) {
-        puts("Enter string: ");
-        gets(ch);
-        ch[strlen(ch)] = '\0';
-
-        write(sockfd, ch, strlen(ch));
+    if(input == 2) {
+        *buffer = (char*) *(buffer);
     }
 
-    while(n) {
-        client_task(sockfd, buffer, &n);
+    if(buffer != NULL && *buffer != NULL) {
+
+        print_buffer(*buffer, buffer_size);
+
+        send(sockfd, buffer, buffer_size * sizeof(int), 0);
+
+    } else {
+
+        printf("\nInput buffer is empty you duffer\n");
     }
 
-    return 0;
+    client_task(result_buffer, buffer_size);
+    recv(sockfd, &result_buffer, buffer_size * sizeof(int), 0);
+    printf("\n%s\n", result_buffer);
+
+
+    return 1;
 }
 
 #endif

@@ -11,6 +11,9 @@
 #include <netdb.h>
 #include <unistd.h>
 
+#define CHAR 1
+#define INT 0
+
 //remove buffer from args to solve sorting q3 problem
 
 void print_buffer(int* buffer, int buffer_size) {
@@ -22,14 +25,27 @@ void print_buffer(int* buffer, int buffer_size) {
     printf("\n");
 }
 
-int create_client(char* ip_addr, int port_no, int** buffer, int buffer_size, int (*client_task) (int*, int)) {
+void cast_buffer(int type, void* buffer, int buffer_size) {
+
+    if(type == CHAR) {
+        buffer = (char*) malloc(sizeof(char) * buffer_size);
+
+    } else if(type == INT) {
+        buffer = (int*) malloc(sizeof(int) * buffer_size);
+    }
+
+}
+
+int create_client(char* ip_addr, int port_no, int type, void** buffer, int buffer_size, int (*client_task) (void*, int)) {
 
     int len;
     int result;
     int sockfd;
     int n = 1;
 
-    int result_buffer[buffer_size];
+    void* result_buffer;
+
+    cast_buffer(type, buffer, buffer_size);
 
     struct sockaddr_in address;
 
@@ -54,9 +70,19 @@ int create_client(char* ip_addr, int port_no, int** buffer, int buffer_size, int
 
     //print_buffer(*buffer, buffer_size);
 
-    send(sockfd, buffer, buffer_size * sizeof(int), 0);
+    if(type == INT) {
 
-    recv(sockfd, &result_buffer, buffer_size * sizeof(int), 0);
+        send(sockfd, buffer, buffer_size * sizeof(int), 0);
+
+        recv(sockfd, &result_buffer, buffer_size * sizeof(int), 0);
+
+    } else if(type == CHAR) {
+
+        send(sockfd, buffer, buffer_size * sizeof(char), 0);
+
+        recv(sockfd, &result_buffer, buffer_size * sizeof(char), 0);\
+
+    }
 
     client_task(result_buffer, buffer_size);
 

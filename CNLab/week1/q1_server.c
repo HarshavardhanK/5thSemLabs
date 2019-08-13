@@ -10,7 +10,7 @@
 int perform_server_task(int socket_fd, char* buffer) {
 
     struct sockaddr_in client_addr;
-    int client_addr_l;
+    socklen_t client_addr_l;
 
     int sockfd = accept(socket_fd, (struct sockaddr*)& client_addr, &client_addr_l);
 

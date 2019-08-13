@@ -17,8 +17,8 @@ int create_socket(char* ip_addr, unsigned short int port_no, int (*server_task)(
     int socket_file_desc;
     int new_socket_file_desc;
 
-    int client_addr_length;
-    int write_status;
+    socklen_t client_addr_length;
+    socklen_t write_status;
     
     struct sockaddr_in server_addr;
     struct sockaddr_in client_addr;
