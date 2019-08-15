@@ -19,7 +19,7 @@ void swap(int *xp, int *yp)
     *yp = temp; 
 } 
   
-int selectionSort(int* arr, int n) { 
+void selectionSort(int* arr, int n) { 
 
     printf("this is server task\n");
     printf("n is %d\n", n);
@@ -43,12 +43,15 @@ int selectionSort(int* arr, int n) {
 
     print_array(arr, n);
 
-    return 1;
 } 
+
+void print(int num, int size) {
+    printf("%d\n", num);
+}
 
 int main(int argc, char** argv) {
 
-    create_server("127.0.0.1", 3000, 10, INT, selectionSort);
+    server("127.0.0.1", 3000, 10, print);
 
     return 0;
 }

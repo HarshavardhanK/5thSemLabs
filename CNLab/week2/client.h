@@ -41,15 +41,13 @@ void cast_buffer(int type, void* buffer, int buffer_size) {
 
 }
 
-int create_client(char* ip_addr, int port_no, int type, void* buffer, int buffer_size, int (*client_task) (int*, int)) {
+int create_client(char* ip_addr, int port_no, int type, int buffer_size, int (*client_task) (int, int)) {
 
     int len;
     int result;
     int sockfd;
 
-    void* result_buffer;
-
-    cast_buffer(type, buffer, buffer_size);
+    int buffer = 10;
 
     struct sockaddr_in address;
 
@@ -73,7 +71,7 @@ int create_client(char* ip_addr, int port_no, int type, void* buffer, int buffer
 
     if(type == INT) {
 
-        print_buffer(buffer, buffer_size, INT);
+        //print_buffer(buffer, buffer_size, INT);
 
         if(send(sockfd, &buffer, buffer_size * sizeof(int), 0) < 0) {
             perror("sending failed");
@@ -89,7 +87,7 @@ int create_client(char* ip_addr, int port_no, int type, void* buffer, int buffer
 
     } else if(type == CHAR) {
 
-        print_buffer(buffer, buffer_size, INT);
+        //print_buffer(buffer, buffer_size, INT);
 
         if(send(sockfd, &buffer, buffer_size * sizeof(char), 0) < 0) {
             perror("sending failed");
@@ -101,11 +99,11 @@ int create_client(char* ip_addr, int port_no, int type, void* buffer, int buffer
             return 1;
         }
 
-        print_buffer(result_buffer, buffer_size, INT);
+        //print_buffer(result_buffer, buffer_size, INT);
 
     }
 
-    client_task(result_buffer, buffer_size);
+    client_task(buffer, buffer_size);
 
     close(sockfd);
 

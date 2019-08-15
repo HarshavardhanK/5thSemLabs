@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     int arr[10] = {4,5,6,-1,1,2,8,7,3,6};
 
-    int client = create_client("127.0.0.1", 3000, INT, arr, 10, print_array);
+    int client = create_client("127.0.0.1", 3000, INT, 10, print_array);
 
     return 0;
 }
