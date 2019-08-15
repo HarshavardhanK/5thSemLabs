@@ -16,10 +16,15 @@
 
 //remove buffer from args to solve sorting q3 problem
 
-void print_buffer(int* buffer, int buffer_size) {
+void print_buffer(void* buffer, int buffer_size, int TYPE) {
 
-    for(int i = 0; i < buffer_size; i++) {
-        printf("%d ", buffer[i]);
+    if(TYPE == CHAR) {
+        for(int i = 0; i < buffer_size; i++) 
+            printf("%c", ((char*)buffer)[i]);
+
+    } else {
+        for(int i = 0; i < buffer_size; i++) 
+            printf("%d ", ((int*)buffer)[i]);
     }
 
     printf("\n");
@@ -36,12 +41,11 @@ void cast_buffer(int type, void* buffer, int buffer_size) {
 
 }
 
-int create_client(char* ip_addr, int port_no, int type, void** buffer, int buffer_size, int (*client_task) (void*, int)) {
+int create_client(char* ip_addr, int port_no, int type, void* buffer, int buffer_size, int (*client_task) (int*, int)) {
 
     int len;
     int result;
     int sockfd;
-    int n = 1;
 
     void* result_buffer;
 
@@ -59,7 +63,6 @@ int create_client(char* ip_addr, int port_no, int type, void** buffer, int buffe
 
     len = sizeof(address);
 
-    //Connect your socket to the server's socket
     result = connect(sockfd, (struct sockaddr*)& address, len);
 
     if(result == -1) {
@@ -68,25 +71,45 @@ int create_client(char* ip_addr, int port_no, int type, void** buffer, int buffe
         return -1;
     }
 
-    //print_buffer(*buffer, buffer_size);
-
     if(type == INT) {
 
-        send(sockfd, buffer, buffer_size * sizeof(int), 0);
+        print_buffer(buffer, buffer_size, INT);
 
-        recv(sockfd, &result_buffer, buffer_size * sizeof(int), 0);
+        if(send(sockfd, &buffer, buffer_size * sizeof(int), 0) < 0) {
+            perror("sending failed");
+            return 1;
+        }
+
+        if(recv(sockfd, &buffer, buffer_size * sizeof(int), 0) < 0) {
+            perror("receive failed");
+            return 1;
+        }
+
+        //print_buffer(result_buffer, buffer_size, INT);
 
     } else if(type == CHAR) {
 
-        send(sockfd, buffer, buffer_size * sizeof(char), 0);
+        print_buffer(buffer, buffer_size, INT);
 
-        recv(sockfd, &result_buffer, buffer_size * sizeof(char), 0);\
+        if(send(sockfd, &buffer, buffer_size * sizeof(char), 0) < 0) {
+            perror("sending failed");
+            return 1;
+        }
+
+        if(recv(sockfd, &buffer, buffer_size * sizeof(char), 0) < 0) {
+            perror("receive failed");
+            return 1;
+        }
+
+        print_buffer(result_buffer, buffer_size, INT);
 
     }
 
     client_task(result_buffer, buffer_size);
 
-    return 1;
+    close(sockfd);
+
+    return 0;
 }
 
 #endif

@@ -17,10 +17,16 @@
 #define CHAR 1
 #define INT 0
 
-void print_buffer(int *buffer, int buffer_size) {
+void print_buffer(void* buffer, int buffer_size, int TYPE) {
 
-    for(int i = 0; i < buffer_size; i++) {
-        printf("%d ", buffer[i]);
+    if(TYPE == CHAR) {
+        
+        for(int i = 0; i < buffer_size; i++) 
+            printf("%c", ((char*)buffer)[i]);
+
+    } else {
+        for(int i = 0; i < buffer_size; i++) 
+            printf("%d ", ((int*)buffer)[i]);
     }
 
     printf("\n");
@@ -39,7 +45,7 @@ void cast_buffer(int type, void* buffer, int buffer_size) {
 
 //handle buffer_size param for q3
 
-int create_server(char* ip_addr, int port_no, int buffer_size, int type, int (*server_task) (void* buffer, int buffer_size)) {
+int create_server(char* ip_addr, int port_no, int buffer_size, int type, int (*server_task) (int* buffer, int buffer_size)) {
     
     int server_sockfd, client_sockfd;
     socklen_t server_len, client_len;
@@ -125,15 +131,21 @@ int create_server(char* ip_addr, int port_no, int buffer_size, int type, int (*s
 
                        if(type == INT) {
 
-                           //printf("Problem with receviing\n");
+                           printf("receviing\n");
 
                            while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(int), 0)) > 0) { 
 
+                               print_buffer(buffer, buffer_size, INT);
+
+                               printf("received\n");
+
                                if(buffer != NULL) {
+
+                                   printf("server task\n");
 
                                    server_task(buffer, buffer_size); 
   
-                                   write(client_sockfd, buffer, buffer_size * sizeof(int)); 
+                                   write(client_sockfd, &buffer, buffer_size * sizeof(int)); 
 
                                } else {
 
@@ -148,9 +160,9 @@ int create_server(char* ip_addr, int port_no, int buffer_size, int type, int (*s
 
                            while ((read_size = recv(client_sockfd, &buffer, buffer_size * sizeof(char), 0)) > 0) { 
   
-                            server_task(buffer, buffer_size); 
+                                server_task(buffer, buffer_size); 
   
-                            write(client_sockfd, buffer, buffer_size * sizeof(char)); 
+                                write(client_sockfd, &buffer, buffer_size * sizeof(char)); 
                          } 
 
                        }

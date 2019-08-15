@@ -19,21 +19,27 @@ void swap(int *xp, int *yp)
     *yp = temp; 
 } 
   
-int selectionSort(int arr[], int n) 
-{ 
-    printf("sorting\n");
-    int i, j, min_idx; 
+int selectionSort(int* arr, int n) { 
 
-    for (i = 0; i < n-1; i++) 
-    { 
+    printf("this is server task\n");
+    printf("n is %d\n", n);
+    print_buffer((void*)&arr, n, INT);
+
+    for (int i = 0; i < n-1; i++) { 
          
-        min_idx = i; 
-        for (j = i+1; j < n; j++) 
-          if (arr[j] < arr[min_idx]) 
+        int min_idx = i; 
+        printf("h: ");
+        printf("%d ", ((int*)arr)[i]);
+
+        for (int j = i + 1; j < n; j++) 
+
+          if (((int*)arr)[j] < ((int*)arr)[min_idx]) 
             min_idx = j; 
   
-        swap(&arr[min_idx], &arr[i]); 
+        swap(&((int*)arr)[min_idx], &((int*)arr)[i]); 
     } 
+
+    printf("\nSorted array\n");
 
     print_array(arr, n);
 
@@ -42,7 +48,7 @@ int selectionSort(int arr[], int n)
 
 int main(int argc, char** argv) {
 
-    create_server("127.0.0.1", 3000, 10, selectionSort);
+    create_server("127.0.0.1", 3000, 10, INT, selectionSort);
 
     return 0;
 }
