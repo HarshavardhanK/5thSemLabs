@@ -28,7 +28,7 @@ int create_client(char* ip, unsigned short int port) {
 void client_task(int sockfd, char ch) {
 
     write(sockfd, &ch, sizeof(ch));
-    char *mess = (char*) malloc(sizeof(char) * 1024);
+    char *mess = (char*) malloc(sizeof(char) * 8000);
 
     read(sockfd, mess, sizeof(mess));
 
@@ -41,7 +41,6 @@ int main() {
 
     if(sockfd != -1) {
         client_task(sockfd, 'b');
-       // printf("successfull");
 
     } else {
         printf("\nfailed\n");
