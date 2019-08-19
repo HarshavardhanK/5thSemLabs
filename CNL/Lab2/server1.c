@@ -29,6 +29,8 @@ void server_task(int *sockfd, int *newsockfd, char*ip, unsigned short int port) 
 
 	write(*newsockfd, buffer, sizeof(buffer));
 
+	exit(0);
+
 }
 
 void create_server(char* ip, unsigned short int port) {
