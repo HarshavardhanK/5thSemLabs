@@ -1,4 +1,6 @@
 #include <iostream>
+
+#include "time_functions.h"
 #include "generate.hpp"
 
 bool contains(std::string str_, std::string find) {
@@ -27,18 +29,26 @@ bool contains(std::string str_, std::string find) {
     return found;
 }
 
-int main(int argc, char** argv) {
+void test_string_search() {
 
-    std::string str_ = "abcdecdecdefgcde";
-    std::string find = "gcde";
+    std::string str_ = generate_string(1000);
+    //std::cout << str_ << std::endl;
+    std::string find = generate_string(307);
+    std::cout << "\n";
+    //std::cout << find << std::endl;
 
     if(contains(str_, find)) {
         std::cout << "Found\n";
     } else {
         std::cout << "Not found\n"; 
     }
+    
+}
 
-    return 0;
+int main(int argc, char** argv) {
+
+    std::cout << time_taken(test_string_search) << "s\n";
+
 
     return 0;
 }
