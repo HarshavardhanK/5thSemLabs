@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+
+#include "time_functions.h"
 #include "generate.hpp"
 using namespace std;
 
@@ -19,11 +21,9 @@ void bubble_sort(int* arr, int size, int* op_count) {
     }
 }
 
-int main(int argc, char** argv) {
+void test_bubble_sort() {
 
-    int size; 
-    
-    cout << "Enter size: "; cin >> size;
+    int size = 1000;
 
     int *arr = new int[size];
 
@@ -38,7 +38,13 @@ int main(int argc, char** argv) {
 
     cout << "Op count: " << op_count <<'\n';
 
-    return 0;
+}
+
+int main(int argc, char** argv) {
+
+    
+
+   cout << time_taken(test_bubble_sort) << "s\n";
 
 
     return 0;
