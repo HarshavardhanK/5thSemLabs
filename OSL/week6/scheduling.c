@@ -1,6 +1,8 @@
 #include "process.h"
 #include "queue.h"
 
+#include <unistd.h>
+
 void fcfs(PROC* arr[], int size) {
 
     float average_wait = 0.0;
@@ -23,9 +25,41 @@ void fcfs(PROC* arr[], int size) {
     printf("Average waiting time is %.2f: \n", (average_wait / size));
 }
 
+void round_robin(QUEUE* queue) {
+
+    int total = 10;
+
+    float wait = 0.0;
+
+    sleep(front(queue)->burst);
+
+    dequeue(queue);
+
+
+    while(1) {
+
+        dequeue(queue);
+
+        PROC* curr = front(queue);
+        sleep(curr->burst);
+        
+        //wait += curr->burst;
+        wait += total - front(queue)->arrival;
+        total += 10;
+
+        if(is_empty(queue)) {
+            break;
+        }
+    }
+
+    printf("Wait time is %.2f\n", wait);
+}
+
 void input_process() {
 
     int size;
+
+    QUEUE* queue = create_queue(10, 3);
 
     printf("Enter process in ascending order\n");
     printf("Enter number of process: "); scanf("%d", &size);
@@ -41,9 +75,13 @@ void input_process() {
         PROC* p = create_process(burst, arrival, priority);
 
         arr[i] = p;
+
+        enqueue(queue, p);
     }
 
-    fcfs(arr, size);
+    //fcfs(arr, size);
+    round_robin(queue);
+    
 
 }
 
