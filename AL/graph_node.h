@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 struct node {
 
@@ -49,6 +50,8 @@ NODE* search(NODE* node, void* value, int (*equal)(const void*, const void*)) {
             if(equal(iter->data, value)) {
                 return iter;
             }
+
+            iter = iter->next;
         }
     }
 
@@ -70,6 +73,30 @@ void print_list(NODE* head, void (*print)(void*)) {
     } else {
         printf("ERROR ENOLIST Empty list\n");
     }
+}
+
+
+
+void print_node_char(void* value) {
+    printf("%s-> ", value);
+}
+
+void print_list_list(void* value) {
+
+    print_list(value, print_node_char);
+    
+}
+
+int str_cmp(const void* s1, const void* s2) {
+    return strcmp((char*)s1, (char*)s2) == 0;
+}
+
+int node_cmp(const void* n1, const void* n2, int (*compare)(const void*, const void*)) {
+    return compare(n1, n2);
+}
+
+int str_node_compare(const void* n1, const void* n2) {
+    return node_cmp(((NODE*)n1)->data, ((NODE*)n2)->data, str_cmp);
 }
 
 

@@ -11,30 +11,52 @@ struct graph {
 
 typedef struct graph GRAPH;
 
-GRAPH* init_graph(int size, int (*equal_)(const void*, const void*)) {
+GRAPH* init_graph(void* source, int (*equal_)(const void*, const void*)) {
 
     GRAPH* graph = (GRAPH*) malloc(sizeof(GRAPH));
     graph->equal = equal_;
-    graph->ADJ = (NODE*) malloc(sizeof(NODE));
+
+    NODE* node_source = create_node(source);
+    graph->ADJ = create_node(node_source);
 
     return graph;
 }
 
 void add_edge(GRAPH* graph, void* from, void* to) {
 
-    NODE* from_node = search(graph->ADJ, from, graph->equal);
-    NODE* to_node = search(graph->ADJ, to, graph->equal);
+    printf("ADDING EDGE\n");
+
+    NODE* from_node = search(graph->ADJ, create_node(from), graph->equal);
+    NODE* to_node = search(graph->ADJ, create_node(to), graph->equal);
 
     if(from_node != NULL) {
-        printf("NODE present\n");
+
+        printf("FROM NODE present\n");
+        push_back(from_node, to);
 
     } else {
-        printf("NODE not present");
-        NODE* from_node = create_node(from);
+
+        printf("NODE not present\n");
+        from_node = create_node(from);
+        push_back(graph->ADJ, from_node);
     }
 
     if(to_node != NULL) {
 
+        printf("FROM NODE present\n");
+        from_node = create_node(from);
+        push_back(to_node, from);
+
+    } else {
+
+         printf("TO NODE not present\n");
+         to_node = create_node(from);
+         push_back(to_node, from);
+         push_back(graph->ADJ, to_node);
     }
+
+    print_list(from_node, print_node_char);
+
+    printf("Added edges\n");
 }
 #endif
