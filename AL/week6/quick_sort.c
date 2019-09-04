@@ -67,15 +67,6 @@ void quick_sort(int arr[], int low, int high) {
     }  
 }
 
-void test_(int size) {
-
-    int array[size];
-
-    generate_array(array, size, -100, 500);
-
-    quick_sort(array, 0, size - 1);
-}
-
 int cmpfunc (const void * a, const void * b) {
    return ( *(int*)a - *(int*)b );
 }
@@ -86,6 +77,7 @@ void test(int size) {
     generate_array(array, size, -100, 100);
     qsort(array, size, sizeof(int), cmpfunc);
 }
+
 
 int main(int argc, char** argv) {
 
