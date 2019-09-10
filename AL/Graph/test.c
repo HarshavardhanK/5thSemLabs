@@ -52,13 +52,14 @@ void list_list() {
 
 void test_graph() {
 
-
     GRAPH* graph = init_graph("hello", str_node_compare);
 
     if(graph) {
         add_edge(graph, "hello", "to");
-        //add_edge(graph, "hello", "where");
+        add_edge(graph, "hello", "where");
     }
+
+    printf("Printing graph\n");
 
     print_list(graph->ADJ, print_list_list);
 
@@ -67,10 +68,6 @@ void test_graph() {
 int main(int argc, char** argv) {
 
     test_graph();
-    //list_list();
-    //test_nodes();
-
-    
 
     return 0;
 }

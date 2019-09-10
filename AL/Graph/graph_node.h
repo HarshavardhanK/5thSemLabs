@@ -43,20 +43,26 @@ NODE* search(NODE* node, void* value, int (*equal)(const void*, const void*)) {
 
     if(node != NULL) {
 
+        printf("SEARCHING..\n");
+
         NODE* iter = node;
 
         while(iter != NULL) {
 
             if(equal(iter->data, value)) {
-                return iter;
+                printf("FOUND..\n");
+                return iter->data;
             }
 
             iter = iter->next;
         }
     }
 
+    printf("Value not found\n");
+
     return NULL;
 }
+
 void print_list(NODE* head, void (*print)(void*)) {
 
     if(head) {
@@ -81,10 +87,24 @@ void print_node_char(void* value) {
     printf("%s-> ", value);
 }
 
-void print_list_list(void* value) {
+void print_node(void* value) {
+    printf("%s", ((NODE*)value)->data);
+}
 
+void print_list_list(void* value) {
     print_list(value, print_node_char);
-    
+}
+
+void print_graph_adj(void* value) {
+
+    NODE* iter = (NODE*) value;
+
+    while(iter != NULL) {
+        print_node_char(iter);
+        iter = iter->next;
+    }
+
+    printf("END\n");
 }
 
 int str_cmp(const void* s1, const void* s2) {

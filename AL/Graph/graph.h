@@ -35,28 +35,32 @@ void add_edge(GRAPH* graph, void* from, void* to) {
         push_back(from_node, to);
 
     } else {
-
         printf("NODE not present\n");
         from_node = create_node(from);
+
+        push_back(from_node, to);
         push_back(graph->ADJ, from_node);
+
     }
 
     if(to_node != NULL) {
 
-        printf("FROM NODE present\n");
-        from_node = create_node(from);
+        printf("TO NODE present\n");
         push_back(to_node, from);
-
+    
     } else {
 
          printf("TO NODE not present\n");
-         to_node = create_node(from);
+         to_node = create_node(to);
+
          push_back(to_node, from);
          push_back(graph->ADJ, to_node);
+
     }
 
-    print_list(from_node, print_node_char);
+    //print_node(from_node);
 
+    print_list(to_node, print_node_char);
     printf("Added edges\n");
 }
 #endif
