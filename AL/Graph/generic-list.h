@@ -81,6 +81,9 @@ void print_list(NODE* head, void (*print)(void*)) {
     }
 }
 
+void print_node_int(void* value) {
+    printf("%d->", (int)value);
+}
 
 
 void print_node_char(void* value) {
@@ -88,7 +91,7 @@ void print_node_char(void* value) {
 }
 
 void print_node(void* value) {
-    printf("%s", ((NODE*)value)->data);
+    printf("%s ", ((NODE*)value)->data);
 }
 
 void print_list_list(void* value) {

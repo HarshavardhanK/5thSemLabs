@@ -1,68 +1,32 @@
 #include "graph.h"
 
-void test_nodes() {
+void test_list() {
 
-    char* value = "hello";
-    char* v2 = "how";
-    char* v3 = "what";
+    LIST* head = create_node(0);
 
-    NODE* node = create_node((void*)value);
-    push_back(node, v2);
-    push_back(node, v3);
-
-    print_list(node, print_node_char);
-
-    int (*compare)(const void*, const void* ) = &str_cmp;
-
-    if(search(node, "hello", compare) != NULL) {
-        printf("FOUND\n");
-    } else {
-        printf("NOT FOUND\n");
+    for(int i = 0; i < 5; i++) {
+        push_back(head, i);
     }
 
+    print_list(head);
+
+    printf("%d\n", front(&head)->data);
+
+    print_list(head);
+
 }
-
-void list_list() {
-
-    char* value = "hello";
-    char* v2 = "how";
-    char* v3 = "what";
-
-    NODE* node = create_node((void*)value);
-    push_back(node, v2);
-    push_back(node, v3);
-
-    NODE* n2 = create_node(v3);
-    push_back(n2, v2); push_back(n2, value);
-
-    NODE* master = create_node(node);
-    push_back(master, n2);
-
-    print_list(master, print_list_list);
-
-    if(search(master, create_node("hello"), str_node_compare) != NULL) {
-        printf("FOUND HELLO\n");
-    } else {
-        printf("NOT FOUND\n");
-    }
-
-    
-}
-
 
 void test_graph() {
 
-    GRAPH* graph = init_graph("hello", str_node_compare);
+    GRAPH* graph = create_graph(4);
 
-    if(graph) {
-        add_edge(graph, "hello", "to");
-        add_edge(graph, "hello", "where");
-    }
+    add_edge(graph, 0, 1);
+    add_edge(graph, 0, 2);
+    add_edge(graph, 1, 3);
+    add_edge(graph, 1, 3);
+    add_edge(graph, 6, 7);
 
-    printf("Printing graph\n");
-
-    print_list(graph->ADJ, print_list_list);
-
+    print_graph(graph);
 }
 
 int main(int argc, char** argv) {

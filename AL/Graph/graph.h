@@ -1,66 +1,152 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include "graph_node.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+struct list {
+    struct list* next;
+    int data;
+};
+
+typedef struct list LIST;
+
+LIST* create_node(int value) {
+
+    LIST* list = (LIST*) malloc(sizeof(LIST));
+    list->data = value;
+    list->next = NULL;
+
+    return list;
+} 
+
+void push_back(LIST* head, int value) {
+
+    if(head) {
+
+        LIST* iter = head;
+
+        while(iter->next != NULL) {
+            iter = iter->next;
+        }
+
+        iter->next = create_node(value);
+
+    } else {
+
+        head = create_node(value);
+    }
+}
+
+LIST* front(LIST** head) {
+
+    if(head) {
+
+        LIST* res = *head;
+        *head = (*head)->next;
+
+        return res;
+
+    } else {
+        printf("Empty list\n");
+        return NULL;
+    }
+}
+
+void print_list(LIST* head) {
+
+    if(head) {
+
+        LIST* iter = head;
+
+        while(iter) {
+            printf("%d->", iter->data);
+            iter = iter->next;
+        }
+
+        printf("END\n");
+
+    } else {
+        printf("LIST empty\n");
+    }
+}
 
 struct graph {
 
-    int (*equal)(const void*, const void*);
-    NODE* ADJ;
+    LIST** adj_list;
+    int size;
+
 };
 
 typedef struct graph GRAPH;
 
-GRAPH* init_graph(void* source, int (*equal_)(const void*, const void*)) {
+GRAPH* create_graph(int size) {
 
     GRAPH* graph = (GRAPH*) malloc(sizeof(GRAPH));
-    graph->equal = equal_;
+    graph->adj_list = (LIST**) malloc(sizeof(LIST*) * size);
+    graph->size = size;
 
-    NODE* node_source = create_node(source);
-    graph->ADJ = create_node(node_source);
+    for(int i = 0; i < size; i++) {
+        graph->adj_list[i] = NULL;
+    }
 
     return graph;
 }
 
-void add_edge(GRAPH* graph, void* from, void* to) {
+void add_edge(GRAPH* graph, int from, int to) {
 
-    printf("ADDING EDGE\n");
-
-    NODE* from_node = search(graph->ADJ, create_node(from), graph->equal);
-    NODE* to_node = search(graph->ADJ, create_node(to), graph->equal);
-
-    if(from_node != NULL) {
-
-        printf("FROM NODE present\n");
-        push_back(from_node, to);
-
-    } else {
-        printf("NODE not present\n");
-        from_node = create_node(from);
-
-        push_back(from_node, to);
-        push_back(graph->ADJ, from_node);
-
+    if(!graph) {
+        return;
     }
 
-    if(to_node != NULL) {
+    if(from > graph->size || to > graph->size)
+        return;
 
-        printf("TO NODE present\n");
-        push_back(to_node, from);
-    
+    if(graph->adj_list[from] == NULL) {
+
+        graph->adj_list[from] = create_node(from);
+        push_back(graph->adj_list[from], to);
+
     } else {
 
-         printf("TO NODE not present\n");
-         to_node = create_node(to);
-
-         push_back(to_node, from);
-         push_back(graph->ADJ, to_node);
-
+        push_back(graph->adj_list[from], to);
     }
 
-    //print_node(from_node);
+    if(graph->adj_list[to] == NULL) {
 
-    print_list(to_node, print_node_char);
-    printf("Added edges\n");
+        graph->adj_list[to] = create_node(to);
+        push_back(graph->adj_list[to], from);
+
+    } else {
+        
+        push_back(graph->adj_list[to], from);
+    }
+
+    printf("Added edge\n");
+
+
 }
+
+void breadth_first_search(GRAPH* graph) {
+    
+}
+
+void print_graph(GRAPH* graph) {
+
+    if(graph) {
+
+        for(int i = 0; i < graph->size; i++) {
+
+            if(graph->adj_list[i]) {
+                print_list(graph->adj_list[i]);
+            }
+
+        }
+
+    }
+
+}
+
+
+
 #endif
