@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "generic-graph.h"
 #include "generic-queue.h"
 
 void test_nodes() {

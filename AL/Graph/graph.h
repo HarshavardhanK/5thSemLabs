@@ -20,11 +20,13 @@ LIST* create_node(int value) {
     return list;
 } 
 
-void push_back(LIST* head, int value) {
+void push_back(LIST** head, int value) {
 
-    if(head) {
+    if(*head) {
 
-        LIST* iter = head;
+        printf("adding %d..", value);
+
+        LIST* iter = *head;
 
         while(iter->next != NULL) {
             iter = iter->next;
@@ -34,13 +36,17 @@ void push_back(LIST* head, int value) {
 
     } else {
 
-        head = create_node(value);
+        printf("adding head null %d..", value);
+
+        *head = create_node(value);
     }
 }
 
 LIST* front(LIST** head) {
 
     if(head) {
+
+        printf("removing %d ..", (*head)->data);
 
         LIST* res = *head;
         *head = (*head)->next;
@@ -53,13 +59,21 @@ LIST* front(LIST** head) {
     }
 }
 
+int is_empty(LIST* list) {
+
+    if(list == NULL)
+        return 1;
+    
+    return 0;
+}
+
 void print_list(LIST* head) {
 
     if(head) {
 
         LIST* iter = head;
 
-        while(iter) {
+        while(iter != NULL) {
             printf("%d->", iter->data);
             iter = iter->next;
         }
@@ -104,22 +118,22 @@ void add_edge(GRAPH* graph, int from, int to) {
 
     if(graph->adj_list[from] == NULL) {
 
-        graph->adj_list[from] = create_node(from);
-        push_back(graph->adj_list[from], to);
+        graph->adj_list[from] = create_node(to);
+        //push_back(&graph->adj_list[from], to);
 
     } else {
 
-        push_back(graph->adj_list[from], to);
+        push_back(&graph->adj_list[from], to);
     }
 
     if(graph->adj_list[to] == NULL) {
 
-        graph->adj_list[to] = create_node(to);
-        push_back(graph->adj_list[to], from);
+        graph->adj_list[to] = create_node(from);
+        //push_back(&graph->adj_list[to], from);
 
     } else {
         
-        push_back(graph->adj_list[to], from);
+        push_back(&graph->adj_list[to], from);
     }
 
     printf("Added edge\n");
@@ -127,8 +141,50 @@ void add_edge(GRAPH* graph, int from, int to) {
 
 }
 
-void breadth_first_search(GRAPH* graph) {
-    
+void breadth_first_search(GRAPH* graph, int source) {
+
+    if(!graph) {
+        return;
+    }
+
+    int *visited = (int*) malloc(sizeof(int) * graph->size);
+
+    for(int i = 0; i < graph->size; i++) {
+        visited[i] = 0;
+    }
+
+    int arr[graph->size];// = (int*) malloc(sizeof(int) * graph->size);
+    int k = 0;
+
+    printf("Printing source adj_list\n");
+
+    LIST* queue = create_node(source);
+
+    while(!is_empty(queue)) {
+       
+        LIST* adj_node = front(&queue);
+        LIST* adj = graph->adj_list[adj_node->data];
+
+        print_list(adj);
+
+        while(adj != NULL && visited[adj->data] == 0) {
+
+            arr[k++] = adj->data;
+            
+            printf("%d  ", adj->data);
+            push_back(&queue, adj->data);
+
+            visited[adj->data] = 1;
+            
+            adj = adj->next;
+
+        }
+
+    }
+
+    for(int i = 0; i < graph->size; i++)
+        printf("%d ", arr[i]);
+
 }
 
 void print_graph(GRAPH* graph) {
