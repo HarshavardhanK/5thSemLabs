@@ -68,15 +68,15 @@ void enqueue(QUEUE* queue, PROC* process) {
     print_process(process);
 }
 
-void dequeue(QUEUE* queue) {
+PROC* dequeue(QUEUE* queue) {
 
     if(queue->front == queue->rear) {
         printf("Queue is empty\n");
-        return;
+        return NULL;
     }
 
     queue->front = queue->front + 1 % queue->size;
-    queue->arr[queue->front];
+    return queue->arr[queue->front];
 
 }
 

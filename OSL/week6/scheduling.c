@@ -55,6 +55,21 @@ void round_robin(QUEUE* queue) {
     printf("Wait time is %.2f\n", wait);
 }
 
+void shortest_remaining_time(QUEUE* input_queue, QUEUE* output_queue, int size) {
+
+    if(input_queue == NULL || output_queue == NULL) {
+        printf("Queue empty for preemptive sjf");
+        return;
+    }
+
+    float waiting_time;
+
+    while(1) {
+        
+    }
+
+}
+
 void input_process() {
 
     int size;
@@ -80,6 +95,7 @@ void input_process() {
     }
 
     //fcfs(arr, size);
+    print_queue(queue);
     round_robin(queue);
     
 
