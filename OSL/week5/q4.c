@@ -17,9 +17,6 @@ void *odd(void * arg) {
     for(int i = 0; i < param->size; i++)
         if(param->arr[i] % 2 == 1)
             sum += param->arr[i];
-
-    
-    printf("%d\n", sum);
     
     return (void*) sum;
 }
@@ -33,8 +30,6 @@ void* even(void* arg) {
     for(int i = 0; i < param->size; i++) 
         if(param->arr[i] % 2 == 0)
             sum += param->arr[i];
-
-    printf("%d\n", sum);
     
     return (void*) sum;
 }
@@ -69,7 +64,7 @@ int main(int argc, char** argv) {
     pthread_join(odd_thread, &odd_sum);
 
     printf("Even sum: %d\n", even_sum);
-    printf("Odd sum: %d\n", even_sum);
+    printf("Odd sum: %d\n", odd_sum);
 
     return 0;
 }
