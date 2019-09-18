@@ -27,7 +27,7 @@ void test_avl() {
     for(int i = 0; i < 9; i++) {
         int ins = rand() % (i + 4);
         printf("Inserting %d\n", ins);
-        root = insert(root, ins);
+        root = avl__insert(root, ins);
     }
 
     print_inorder(root);

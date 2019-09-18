@@ -119,5 +119,9 @@ int main() {
 
     take_input(graph, 4);
 
+    all_dfs(q, 0, graph);
+
+    return 0;
+
    
 }
