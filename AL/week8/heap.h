@@ -82,6 +82,16 @@ void heapify(Heap* heap, int index) {
     }
 }
 
+void heap_sort(Heap* heap) {
+
+    if(heap) {
+
+        for(int i = heap->size / 2 - 1; i >= 0; i--) {
+            heapify(heap, i);
+        }
+    }
+}
+
 
 
 #endif
