@@ -94,8 +94,11 @@ void input_process() {
         enqueue(queue, p);
     }
 
-    //fcfs(arr, size);
-    print_queue(queue);
+    printf("FCFS\n");
+    fcfs(arr, size);
+    //print_queue(queue);
+
+    printf("RR\n");
     round_robin(queue);
     
 
