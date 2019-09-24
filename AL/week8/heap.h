@@ -59,7 +59,7 @@ void make_min_heap(Heap* heap, int key) {
     printf("inserted %d into heap\n", key);
 }
 
-void heapify(Heap* heap, int index) {
+void heapify(Heap* heap, int size, int index) {
 
     if(heap) {
 
@@ -67,17 +67,17 @@ void heapify(Heap* heap, int index) {
         int left = largest * 2 + 1;
         int right = largest * 2 + 2;
 
-        if(left < heap->size && heap->arr[left] > heap->arr[largest]) {
+        if(left < size && heap->arr[left] > heap->arr[largest]) {
             largest = left;
         }
 
-        if(right < heap->size && heap->arr[right] > heap->arr[largest]) {
+        if(right < size && heap->arr[right] > heap->arr[largest]) {
             largest = right;
         }
 
         if(largest != index) {
             swap(&heap->arr[index], &heap->arr[largest]);
-            heapify(heap, largest);
+            heapify(heap, size, largest);
         }
     }
 }
@@ -87,8 +87,26 @@ void heap_sort(Heap* heap) {
     if(heap) {
 
         for(int i = heap->size / 2 - 1; i >= 0; i--) {
-            heapify(heap, i);
+            heapify(heap, heap->size, i);
         }
+
+        for(int i = heap->size - 1; i >= 0; i--) {
+            swap(&heap->arr[0], &heap->arr[i]);
+            heapify(heap, i, 0);
+        }
+        
+    }
+}
+
+void print_heap_arr(Heap* heap) {
+
+    if(heap) {
+
+        for(int i = 0; i < heap->size; i++) {
+            printf("%d ", heap->arr[i]);
+        }
+
+        printf("\n");
     }
 }
 
