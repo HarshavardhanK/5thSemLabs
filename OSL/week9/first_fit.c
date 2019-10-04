@@ -2,6 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+void print_allocations(int* allocation, int *proc_mem, int num_proc) {
+
+    printf("PNo\tPSize\tBlock no\n");
+
+    for(int i = 0; i < num_proc; i++) {
+        printf("%d\t%d\t", i + 1, proc_mem[i]);
+
+        if(allocation[i] != -1)
+            printf("%d\n", allocation[i] + 1);
+        else
+            printf("Not allocated\n");
+    }
+
+}
+
 void first_fit(int *memory_bloks, int num_mem, int* proc_mem, int num_proc) {
 
     int allocation[num_proc];
@@ -21,7 +36,7 @@ void first_fit(int *memory_bloks, int num_mem, int* proc_mem, int num_proc) {
         }
     }
 
-    printf("Process allocation\n");
+    printf("Process no\tProcess size\nBlock no\n");
 
     for(int i = 0; i < num_proc; i++) {
         printf("%d\t%d\t", i + 1, proc_mem[i]);
@@ -31,6 +46,64 @@ void first_fit(int *memory_bloks, int num_mem, int* proc_mem, int num_proc) {
         else
             printf("Not allocated\n");
     }
+}
+
+void best_fit(int *memory_bloks, int num_mem, int* proc_mem, int num_proc) {
+
+    int allocation[num_proc];
+    int best_indx = -1;
+
+    memset(allocation, -1, sizeof(allocation));
+
+    for(int i = 0; i < num_proc; i++) {
+
+        for(int j = 0; j < num_mem; j++) {
+
+            if(proc_mem[i] <= memory_bloks[j]) {
+
+                if(best_indx == -1)
+                    best_indx = j;
+                else if(memory_bloks[best_indx] > memory_bloks[j])
+                    best_indx = j;
+            }
+        }
+
+        if(best_indx != -1)
+            allocation[i] = best_indx;
+            memory_bloks[best_indx] -= proc_mem[i];
+    }
+
+    print_allocations(allocation, proc_mem, num_proc);
+
+}
+
+void wrst_fit(int *memory_bloks, int num_mem, int* proc_mem, int num_proc) {
+
+    int allocation[num_proc];
+    int wrst_indx = -1;
+
+    memset(allocation, -1, sizeof(allocation));
+
+    for(int i = 0; i < num_proc; i++) {
+
+        for(int j = 0; j < num_mem; j++) {
+
+            if(proc_mem[i] <= memory_bloks[j]) {
+
+                if(wrst_indx == -1)
+                    wrst_indx = j;
+                else if(memory_bloks[wrst_indx] < memory_bloks[j])
+                    wrst_indx = j;
+            }
+        }
+
+        if(wrst_indx != -1)
+            allocation[i] = wrst_indx;
+            memory_bloks[wrst_indx] -= proc_mem[i];
+    }
+
+    print_allocations(allocation, proc_mem, num_proc);
+
 }
 
 int main(int argc, char** argv) {
@@ -51,7 +124,11 @@ int main(int argc, char** argv) {
         printf("Enter proc blok size: "); scanf("%d", &proc_mem[i]);
     }
 
-    first_fit(mem_blok, num_mem, proc_mem, num_proc);
+   // first_fit(mem_blok, num_mem, proc_mem, num_proc);
+
+    printf("Best fit\n");
+
+    wrst_fit(mem_blok, num_mem, proc_mem, num_proc);
 
     return 0;
 
