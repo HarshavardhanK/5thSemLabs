@@ -55,6 +55,8 @@ $ns attach-agent $n1 $udp
 
 set null [new Agent/Null]
 $ns attach-agent $n3 $null
+
+#connect
 $ns connect $udp $null
 $udp set fid_ 2
 
