@@ -14,7 +14,6 @@ void manual() {
 
         hash(table, val);
 
-        //hash(table, val);
     }
 
     printf("\nHash table is\n");
