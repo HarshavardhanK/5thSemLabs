@@ -7,6 +7,7 @@
 #include <limits.h>
 
 #include "queue.h"
+#include "stack.h"
 
 #define INFINITY 999
 
@@ -70,7 +71,9 @@ Graph* create_graph(int vertices) {
     return graph;
 }
 
-//Conversions
+//---------------------------------------------------Repesentations-------------------------------------------------
+
+//Adjacency Matrix
 
 void print_graph_mat(int** mat, int size) {
 
@@ -115,6 +118,82 @@ void adj_to_mat(Graph* graph, int** mat, int non_connect) {
     }
 
     //print_graph_mat(mat, graph->vertices);
+}
+
+//Edge list
+struct edge_node {
+
+    int src;
+    int dest;
+    int weight;
+
+};
+
+typedef struct edge_node Edge;
+
+Edge* create_edge(int src, int dest, int weight) {
+
+    Edge* edge = (Edge*) malloc(sizeof(Edge));
+    edge->src = src;
+    edge->dest = dest;
+    edge->weight = weight;
+
+    return edge;
+}
+
+struct edge_graph {
+
+    int vertices;
+    int edges;
+
+    Edge** edge_list;
+};
+
+typedef struct edge_graph EGraph;
+
+EGraph* init_egraph(int vertices) {
+
+    EGraph* graph = (EGraph*) malloc(sizeof(EGraph));
+
+    graph->vertices = vertices;
+    graph->edges = 0;
+
+    graph->edge_list = (Edge**) malloc(sizeof(Edge*) * vertices * vertices); //max edges
+
+    return graph;
+
+}
+
+EGraph* graph_to_edge_graph(Graph* graph) {
+
+    EGraph* egraph = init_egraph(graph->vertices);
+
+    for(int i = 0; i < graph->vertices; i++) {
+
+        ADJ_node* iter = graph->array[i].head;
+
+        while(iter) {
+
+            Edge* edge = create_edge(i, iter->dest, iter->weight);
+
+            egraph->edge_list[egraph->edges++] = edge;
+
+            iter = iter->next;
+        }
+    }
+
+    return egraph;
+}
+
+void print_edge_list(EGraph* graph) {
+
+    printf("Edge list representation\n");
+
+    for(int i =0; i < graph->edges; i++) {
+        printf("%d --> %d w: %d\n", graph->edge_list[i]->src, graph->edge_list[i]->dest, graph->edge_list[i]->weight);
+    }
+
+    printf("\n");
 }
 
 void add_edge(Graph* graph, int src, int dest, int weight) {
@@ -193,6 +272,54 @@ Queue* bfs(Graph* graph, int start) {
     return bfs_queue;
 
     printf("\n");
+}
+
+//DSF
+Queue* dfs(Graph* graph, int start) {
+
+    int visited[graph->vertices];
+    memset(visited, 0, sizeof(visited));
+
+    Stack* stack = init_stack(graph->vertices);
+    push(stack, start);
+
+    Queue* result = init_queue(graph->vertices);
+
+    visited[start] = 1;
+    enqueue(result, start);
+
+    while(!stack_empty(stack)) {
+
+        int node_data = pop(stack);
+    
+        if(node_data != -1) {
+
+            ADJ_node* node = graph->array[node_data].head;
+
+            while(node) {
+
+                printf("%d->%d\n", node_data, node->dest);
+
+                if(!visited[node->dest]) {
+
+                    enqueue(result, node->dest);
+                   // printf("%d ", node->dest);
+                    push(stack, node->dest);
+                    visited[node->dest] = 1;
+
+                }
+                
+                node = node->next;
+
+            }
+
+        } else {
+            break;
+        }
+
+    }
+
+    return result;
 }
 
 //DIJSKTRA
@@ -311,7 +438,7 @@ int is_bipartite(Graph* graph) {
     return 1;
 }
 
-//Generate graph
+//---------------------------------------Generate graphs-------------------------------
 Graph* bipartite_graph() {
 
     Graph* graph = create_graph(7);
@@ -333,6 +460,22 @@ Graph* bipartite_graph() {
 
     return graph;
 
+}
+
+Graph* normal_graph() {
+
+    Graph* graph = create_graph(7);
+    add_edge(graph, 0, 1, 3); 
+    add_edge(graph, 0, 4, 11); 
+    add_edge(graph, 1, 2, 4); 
+    add_edge(graph, 1, 3, 1); 
+    add_edge(graph, 1, 4, 5); 
+    add_edge(graph, 2, 3, 6); 
+    add_edge(graph, 3, 4, 9);
+    add_edge(graph, 4, 5, 8);
+    add_edge(graph, 5, 6, 3);
+
+    return graph;
 }
 
 

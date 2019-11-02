@@ -1,29 +1,9 @@
 #include "graph.h"
 
-void test() {
 
-    Graph* graph = create_graph(7);
-    add_edge(graph, 0, 1, 3); 
-    add_edge(graph, 0, 4, 11); 
-    add_edge(graph, 1, 2, 4); 
-    add_edge(graph, 1, 3, 1); 
-    add_edge(graph, 1, 4, 5); 
-    add_edge(graph, 2, 3, 6); 
-    add_edge(graph, 3, 4, 9);
-    add_edge(graph, 4, 5, 8);
-    add_edge(graph, 5, 6, 3);
+void test_dijsktra() {
 
-    print_graph(graph);
-
-    Queue* bfs_queue = bfs(graph, 0);
-
-    if(bfs_queue) {
-        printf("BFS\n");
-        print_queue(bfs_queue);
-    }
-        
-    else
-        printf("BFS QUEUE ERROR\n");
+    Graph* graph = normal_graph();
 
     int** mat = (int**) malloc(sizeof(int*) * graph->vertices);
 
@@ -41,12 +21,41 @@ void test() {
     printf("Single source shortest path\n");
     print_arr(result, graph->vertices);
 
-    if(is_bipartite(graph)) {
-        printf("Graph bipartite\n");
+}
+
+void test_bfs() {
+
+    Graph* graph = normal_graph();
+
+    print_graph(graph);
+
+    Queue* bfs_queue = bfs(graph, 0);
+
+    if(bfs_queue) {
+        printf("BFS\n");
+        print_queue(bfs_queue);
+    }
+        
+    else
+        printf("BFS QUEUE ERROR\n");
+
+}
+
+void test_dfs() {
+
+    Graph* graph = normal_graph();
+    print_graph(graph);
+    Queue* dfs_queue = dfs(graph, 0);
+
+    if(dfs_queue) {
+
+        printf("DFS\n");
+        print_queue(dfs_queue);
 
     } else {
-        printf("Not bipartite\n");
+        printf("No dfs stack found\n");
     }
+
 
 }
 
@@ -60,11 +69,14 @@ void test_bipartite() {
     } else {
         printf("Not bipartite\n");
     }
+
+    EGraph* egraph = graph_to_edge_graph(graph);
+    print_edge_list(egraph);
 }
 
 int main() {
-    test();
-    //test_bipartite();
+
+   test_dfs();
 
     return 0;
 }
