@@ -11,6 +11,11 @@
 
 #define INFINITY 999
 
+#define UNDDIRECTED 0
+#define DIRECTED 1
+
+typedef int direction;
+
 /*Three types of graph representation
 
     Undirected
@@ -45,6 +50,8 @@ struct graph_ {
 
     int vertices;
     ADJ_list* array;
+
+    direction type;
 };
 
 typedef struct graph_ Graph;
@@ -59,11 +66,12 @@ ADJ_node* create_adj_node(int dest, int weight) {
     return node;
 }
 
-Graph* create_graph(int vertices) {
+Graph* create_graph(int vertices, direction type) {
 
     Graph* graph = (Graph*) malloc(sizeof(graph));
     graph->vertices = vertices;
     graph->array = (ADJ_list*) malloc(sizeof(ADJ_list) * vertices);
+    graph->type = type;
 
     for(int i = 0; i < vertices; i++)
         graph->array[i].head = NULL;
@@ -117,7 +125,6 @@ void adj_to_mat(Graph* graph, int** mat, int non_connect) {
         }
     }
 
-    //print_graph_mat(mat, graph->vertices);
 }
 
 //Edge list
@@ -185,12 +192,23 @@ EGraph* graph_to_edge_graph(Graph* graph) {
     return egraph;
 }
 
-void print_edge_list(EGraph* graph) {
+void print_edge_graph(EGraph* graph) {
 
     printf("Edge list representation\n");
 
     for(int i =0; i < graph->edges; i++) {
         printf("%d --> %d w: %d\n", graph->edge_list[i]->src, graph->edge_list[i]->dest, graph->edge_list[i]->weight);
+    }
+
+    printf("\n");
+}
+
+void print_edges(Edge** edge_list, int size) {
+
+    printf("Edge list\n");
+
+    for(int i =0; i < size; i++) {
+        printf("%d --> %d w: %d\n", edge_list[i]->src, edge_list[i]->dest, edge_list[i]->weight);
     }
 
     printf("\n");
@@ -203,10 +221,15 @@ void add_edge(Graph* graph, int src, int dest, int weight) {
     node->next = graph->array[src].head;
     graph->array[src].head = node;
 
-    ADJ_node* dest_node = create_adj_node(src, weight);
+    if(graph->type == UNDDIRECTED) {
 
-    dest_node->next = graph->array[dest].head;
-    graph->array[dest].head = dest_node;
+        ADJ_node* dest_node = create_adj_node(src, weight);
+
+        dest_node->next = graph->array[dest].head;
+        graph->array[dest].head = dest_node;
+
+    }
+
 }
 
 void print_graph(Graph* graph) {
@@ -298,12 +321,10 @@ Queue* dfs(Graph* graph, int start) {
 
             while(node) {
 
-                printf("%d->%d\n", node_data, node->dest);
-
                 if(!visited[node->dest]) {
 
                     enqueue(result, node->dest);
-                   // printf("%d ", node->dest);
+                  
                     push(stack, node->dest);
                     visited[node->dest] = 1;
 
@@ -317,6 +338,72 @@ Queue* dfs(Graph* graph, int start) {
             break;
         }
 
+    }
+
+    return result;
+}
+
+Queue* topological_sort(Graph* graph) {
+
+    //returns a list of nodes in the topological order
+
+    Queue* result = init_queue(graph->vertices);
+    Queue* queue = init_queue(graph->vertices);
+
+    int visited[graph->vertices];
+    memset(visited, 0, sizeof(visited));
+
+    int in_degree[graph->vertices];
+    memset(in_degree, 0, sizeof(in_degree));
+
+    int** mat = (int**) malloc(sizeof(int*) * graph->vertices);
+
+    for(int i = 0; i < graph->vertices; i++)
+        mat[i] = (int*) malloc(sizeof(int) * graph->vertices);
+
+    //convert adjacency list to matrix
+    adj_to_mat(graph, mat, 0);
+
+    for(int i = 0; i < graph->vertices; i++) {
+
+        for(int j = 0; j < graph->vertices; j++) {
+
+            if(mat[i][j] != 0) {
+                in_degree[j]++;
+            }
+        }
+
+    }
+
+    for(int i = 0; i < graph->vertices; i++) {
+
+        //if in-degree is 0, add it to the result array
+
+        if(in_degree[i] == 0) {
+            enqueue(queue, i);
+            visited[i] = 1;
+        }
+    }
+
+    while(!is_empty(queue)) {
+
+        int vertex = dequeue(queue);
+
+        enqueue(result, vertex);
+
+        for(int i = 0; i < graph->vertices; i++) {
+
+            if(mat[vertex][i] && !visited[i]) {
+                in_degree[i]--;
+
+                if(in_degree[i] == 0) {
+                    enqueue(queue, i);
+                    visited[i] = 1;
+                }
+
+            }
+
+        }
     }
 
     return result;
@@ -392,6 +479,52 @@ void disjkstra(Graph* graph, int source, int *result) {
         result[i] = dist[i];
 }
 
+//Kruskal MST
+
+#include "union_find.h"
+
+int compare_edges(const void* e1, const void* e2) {
+    return ((Edge*)e1)->weight > ((Edge*)e2)->weight;
+}
+
+Edge** mst(Graph* graph) {
+
+    EGraph* egraph = graph_to_edge_graph(graph);
+    int edge_counter = 0;
+
+    Edge** result = (Edge**) malloc(sizeof(Edge*) * egraph->edges);
+    int result_counter = 0;
+
+    qsort(egraph->edge_list, egraph->edges, sizeof(egraph->edge_list[0]), compare_edges);
+
+    Subset* subsets = (Subset*) malloc(sizeof(Subset) * egraph->vertices);
+
+    for(int i = 0; i < egraph->vertices; i++) {
+        subsets[i].parent = i;
+        subsets[i].rank = 0;
+    }
+
+    while(result_counter < egraph->edges && edge_counter < egraph->vertices - 1) {
+
+        Edge* next = egraph->edge_list[edge_counter++];
+
+        int src_set = find(subsets, next->src);
+        int dest_set = find(subsets, next->dest);
+
+        if(src_set != dest_set) {
+            result[result_counter++] = next;
+            _union(subsets, src_set, dest_set);
+
+        }
+
+    }
+
+
+    return result;
+
+}
+
+
 //BIPARTITE
 
 
@@ -441,7 +574,7 @@ int is_bipartite(Graph* graph) {
 //---------------------------------------Generate graphs-------------------------------
 Graph* bipartite_graph() {
 
-    Graph* graph = create_graph(7);
+    Graph* graph = create_graph(7, UNDDIRECTED);
 
     add_edge(graph, 0, 1, 3); 
     add_edge(graph, 0, 3, 11); 
@@ -464,7 +597,23 @@ Graph* bipartite_graph() {
 
 Graph* normal_graph() {
 
-    Graph* graph = create_graph(7);
+    Graph* graph = create_graph(7, UNDDIRECTED);
+    add_edge(graph, 0, 1, 3); 
+    add_edge(graph, 0, 4, 11); 
+    add_edge(graph, 1, 2, 4); 
+    add_edge(graph, 1, 3, 1); 
+    add_edge(graph, 1, 4, 5); 
+    add_edge(graph, 2, 3, 6); 
+    add_edge(graph, 3, 4, 9);
+    add_edge(graph, 4, 5, 8);
+    add_edge(graph, 5, 6, 3);
+
+    return graph;
+}
+
+Graph* directed_graph() {
+
+    Graph* graph = create_graph(7, DIRECTED);
     add_edge(graph, 0, 1, 3); 
     add_edge(graph, 0, 4, 11); 
     add_edge(graph, 1, 2, 4); 

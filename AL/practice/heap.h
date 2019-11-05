@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 struct heap_node {
 
@@ -77,7 +78,7 @@ void insert(Heap* heap, int key) {
         insert_index = parent(insert_index);
     }
 
-    printf("%d inserted into heap\n", node.data);
+    printf("%d ", node.data);
 
 }
 
@@ -85,22 +86,62 @@ void heapify(Heap* heap, int index) {
 
     if(heap) {
 
-        int largest = index; 
+        int smallest = index; 
         
-        if(left(index) < heap->size && heap->arr[left(index)].data > heap->arr[largest].data) 
-            largest = left(index);
+        if(left(index) < heap->size && heap->arr[left(index)].data < heap->arr[smallest].data) 
+            smallest = left(index);
         
-        if(right(index) < heap->size && heap->arr[right(index)].data > heap->arr[largest].data)
-            largest = left(index);
+        if(right(index) < heap->size && heap->arr[right(index)].data < heap->arr[smallest].data)
+            smallest = left(index);
         
-        if(largest != index) {
-            swap(&heap->arr[largest], &heap->arr[index]);
-            heapify(heap, largest);
+        if(smallest != index) {
+            swap(&heap->arr[smallest], &heap->arr[index]);
+            heapify(heap, smallest);
         }
     
     } else {
         printf("Heapify Error: Heap empty\n");
     }
+}
+
+H_Node extract_min(Heap* heap) {
+
+    if(heap->size == 1) {
+        H_Node node = heap->arr[0];
+        heap->size--;
+
+        return node;
+
+    } else {
+
+        H_Node node = heap->arr[0];
+        heap->arr[0] = heap->arr[heap->size - 1];
+        heap->size--;
+
+        heapify(heap, 0);
+
+        return node;
+    }
+}
+
+void decrease_key(Heap* heap, int index, int value) {
+
+    if(heap) {
+
+        heap->arr[index] = create_heap_node(value);
+        
+        while(index != 0 && heap->arr[parent(index)].data > heap->arr[index].data) {
+            swap(&heap->arr[parent(index)], &heap->arr[index]);
+            index = parent(index);
+        }
+    }
+}
+
+void delete_key(Heap* heap, int index) {
+
+    decrease_key(heap, index, INT_MIN);
+    extract_min(heap);
+
 }
 
 //Utilities
