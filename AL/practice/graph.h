@@ -258,18 +258,16 @@ Queue* bfs(Graph* graph, int start) {
         return NULL;
     }
 
-    int max_edges = graph->vertices * graph->vertices;
-
-    int visited[max_edges];
+    int visited[graph->vertices];
 
     memset(visited, 0, sizeof(visited));
 
     visited[start] = 1;
 
-    Queue* queue = init_queue(max_edges);
+    Queue* queue = init_queue(graph->vertices);
     enqueue(queue, start);
 
-    Queue* bfs_queue = init_queue(max_edges);
+    Queue* bfs_queue = init_queue(graph->vertices);
     enqueue(bfs_queue, start);
 
     while(!is_empty(queue)) {
@@ -504,7 +502,7 @@ Edge** mst(Graph* graph) {
         subsets[i].rank = 0;
     }
 
-    while(result_counter < egraph->edges && edge_counter < egraph->vertices - 1) {
+    while(result_counter < egraph->vertices - 1 && edge_counter < egraph->edges - 1) {
 
         Edge* next = egraph->edge_list[edge_counter++];
 

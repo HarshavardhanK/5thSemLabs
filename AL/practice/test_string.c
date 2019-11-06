@@ -13,9 +13,11 @@ void test_naive_search() {
 
 void test_boyer_moore() {
 
-    char* string = "Mountbatten"; char* pattern = "ol";
+    char* string = "Mountbatten has a bat which is weirds o weird vert weird"; char* pattern = "bat";
 
-    string_search_boyer_moore(string, pattern);
+    printf("%d\n", string_search_boyer_moore(string, pattern));
+
+    printf("Len: %d\n", strlen(string));
 
 }
 

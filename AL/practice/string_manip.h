@@ -46,7 +46,7 @@ void bad_character_heuristics(char* string, int bad_character_table[256]) {
 
 }
 
-void string_search_boyer_moore(char* string, char* pattern) {
+int string_search_boyer_moore(char* string, char* pattern) {
 
     int find_index = -1;
 
@@ -58,7 +58,7 @@ void string_search_boyer_moore(char* string, char* pattern) {
 
     int shift = 0;
 
-    while(shift < (string_length - pattern_length)) {
+    while(shift <= (string_length - pattern_length)) {
 
         int j = pattern_length - 1;
 
@@ -68,14 +68,17 @@ void string_search_boyer_moore(char* string, char* pattern) {
         if(j < 0) {
             find_index = shift;
             printf("Pattern found at %d\n", shift);
+            //return shift;
+            printf("%d\n", bad_char_table[string[shift + pattern_length]]);
             shift += (shift + pattern_length < string_length) ? pattern_length - bad_char_table[string[shift + pattern_length]] : 1;
+            //shift++;
 
         } else {
             shift += max(1, j - bad_char_table[string[shift + j]]);
         }
     }
 
-    return (find_index == -1) ? 0: find_index;
+    return shift;
 }
 
 

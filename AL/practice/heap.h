@@ -134,6 +134,7 @@ void decrease_key(Heap* heap, int index, int value) {
             swap(&heap->arr[parent(index)], &heap->arr[index]);
             index = parent(index);
         }
+
     }
 }
 
