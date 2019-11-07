@@ -51,9 +51,19 @@ void matrix_sub(int** A, int** B, int** result, int rows, int cols) {
 
 }
 
-int bankers_safety(int* available, int** max, int** allocation, int** need, int num_proc, int num_resourc) {
+int bankers_safety(int* available, int** max, int** allocation, int num_proc, int num_resourc) {
 
     // num_proc x num_resourc matrix.. num_resourc vector len except finish len num_proc (wrt process)
+
+    int** need = (int**) malloc(sizeof(int*) * num_proc);
+
+    for(int i = 0; i < num_proc; i++)
+        need[i] = (int*) malloc(sizeof(int) * num_resourc);
+
+    
+     //Need = Max - Allocation
+
+    matrix_sub(max, allocation, need, num_proc, num_resourc);
 
     int* work = (int*) malloc(sizeof(int) * num_resourc);
 
@@ -92,7 +102,37 @@ int bankers_safety(int* available, int** max, int** allocation, int** need, int 
 
 }
 
-int main() {
+int is_deadlocked(int* available, int** request, int** allocation, int num_proc, int num_resourc) {
+
+    int* work = (int*) malloc(sizeof(int) * num_resourc);
+
+    int finish[num_proc];
+
+    for(int i = 0; i < num_proc; i++) {
+
+        if(!vector_equal(allocation[i], 0, num_resourc)) {
+            finish[i] = 1;
+        }
+    }
+
+    for(int i = 0; i < num_proc; i++) {
+
+        if(!finish[i] && vector_lesser(request[i], work, num_resourc)) {
+            vector_add(work, allocation[i], num_resourc);
+            finish[i] = 1;
+        }
+    }
+
+    if(!vector_equal(finish, 1, num_proc)) {
+        return 1;
+    }
+
+    return 0;
+    
+    
+}
+
+void run_bankers() {
 
     printf("Enter num process: ");
     int num_proc;
@@ -114,12 +154,6 @@ int main() {
     for(int i = 0; i < num_proc; i++)
         allocation[i] = (int*) malloc(sizeof(int) * num_resourc);
 
-    int** need = (int**) malloc(sizeof(int*) * num_proc);
-
-    for(int i = 0; i < num_proc; i++)
-        need[i] = (int*) malloc(sizeof(int) * num_resourc);
-
-   
     printf("Enter available of each type\n");
     for(int i = 0; i < num_resourc; i++) {
         printf("Type %d: ", i);
@@ -136,16 +170,69 @@ int main() {
         for(int j = 0; j < num_resourc; j++)
             scanf("%d", &allocation[i][j]);
 
-     //Need = Max - Allocation
-
-    matrix_sub(max, allocation, need, num_proc, num_resourc);
-
-    if(bankers_safety(available, max, allocation, need, num_proc, num_resourc)) {
+    
+    if(bankers_safety(available, max, allocation, num_proc, num_resourc)) {
         printf("System in safe state\n");
 
     } else {
         printf("System unsafe\n");
     }
 
+
+}
+
+void run_deadlock_detection() {
+
+    printf("Enter num process: ");
+    int num_proc;
+    scanf("%d", &num_proc);
+
+    printf("Enter num resources: ");
+    int num_resourc;
+    scanf("%d", &num_resourc);
+
+    int* available = (int*) malloc(sizeof(int) * num_resourc);
+
+    int** request = (int**) malloc(sizeof(int*) * num_proc);
+
+    for(int i = 0; i < num_proc; i++)
+        request[i] = (int*) malloc(sizeof(int) * num_resourc);
+
+    int** allocation = (int**) malloc(sizeof(int*) * num_proc);
+
+    for(int i = 0; i < num_proc; i++)
+        allocation[i] = (int*) malloc(sizeof(int) * num_resourc);
+
+    printf("Enter available of each type\n");
+    for(int i = 0; i < num_resourc; i++) {
+        printf("Type %d: ", i);
+        scanf("%d", &available[i]);
+    }
+
+    printf("Enter request matrix: \n");
+    for(int i = 0; i < num_proc; i++)
+        for(int j = 0; j < num_resourc; j++)
+            scanf("%d", &request[i][j]);
+
+    printf("Enter allocation matrix\n");
+    for(int i = 0; i < num_proc; i++)
+        for(int j = 0; j < num_resourc; j++)
+            scanf("%d", &allocation[i][j]);
+
+    
+    if(!is_deadlocked(available, request, allocation, num_proc, num_resourc)) {
+        printf("System not deadlocked\n");
+
+    } else {
+        printf("System deadlocked\n");
+    }
+
+}
+
+int main() {
+
+    run_deadlock_detection();
+
+    
     return 0;
 }
