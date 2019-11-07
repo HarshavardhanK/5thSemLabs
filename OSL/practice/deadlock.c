@@ -64,11 +64,11 @@ int bankers_safety(int* available, int** max, int** allocation, int** need, int 
     memset(finish, 0, sizeof(finish));
 
     int safe_sequence[num_proc];
-    int  safe_count = 0;
+    int safe_count = 0;
 
     for(int i = 0; i < num_proc; i++) {
 
-        if(finish[i] == 0 && vector_lesser(need[i], work, num_resourc) == 1) {
+        if(!finish[i] && vector_lesser(need[i], work, num_resourc)) {
 
             vector_add(work, allocation[i], num_resourc); 
             safe_sequence[safe_count++] = i;
