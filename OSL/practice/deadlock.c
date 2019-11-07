@@ -108,13 +108,15 @@ int is_deadlocked(int* available, int** request, int** allocation, int num_proc,
 
     int finish[num_proc];
 
+    vector_copy(work, available, num_resourc);
+
     for(int i = 0; i < num_proc; i++) {
 
         if(!vector_equal(allocation[i], 0, num_resourc)) {
             finish[i] = 0;
 
         } else {
-            finish[1];
+            finish[1] = 1;
         }
     }
 
