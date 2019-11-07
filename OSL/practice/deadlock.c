@@ -111,7 +111,7 @@ int is_deadlocked(int* available, int** request, int** allocation, int num_proc,
     for(int i = 0; i < num_proc; i++) {
 
         if(!vector_equal(allocation[i], 0, num_resourc)) {
-            finish[i] = 1;
+            finish[i] = 0;
         }
     }
 
