@@ -60,19 +60,31 @@ int bankers_safety(int* available, int** max, int** allocation, int** need, int 
     //work = available
     vector_copy(work, available, num_resourc);
 
-    int finish[num_proc] ;//= (int*) malloc(sizeof(int) * num_proc);
+    int finish[num_proc];//= (int*) malloc(sizeof(int) * num_proc);
     memset(finish, 0, sizeof(finish));
+
+    int safe_sequence[num_proc];
+    int  safe_count = 0;
 
     for(int i = 0; i < num_proc; i++) {
 
         if(finish[i] == 0 && vector_lesser(need[i], work, num_resourc) == 1) {
 
             vector_add(work, allocation[i], num_resourc); 
+            safe_sequence[safe_count++] = i;
             finish[i] = 1;
         }
     }
 
     if(vector_equal(finish, 1, num_proc)) {
+
+        printf("Safe sequence is\n");
+
+        for(int i = 0; i < safe_count; i++)
+            printf("%d ", safe_sequence[i]);
+
+        printf("\n");
+
         return 1;
     }
 
