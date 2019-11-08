@@ -236,7 +236,9 @@ void run_deadlock_detection() {
 
 int main() {
 
-    run_deadlock_detection();
+    run_bankers();
+
+    //run_deadlock_detection();
 
     
     return 0;
